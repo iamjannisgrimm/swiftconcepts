@@ -283,7 +283,23 @@ for number in sequence {
 
 
 
-## Decoding - Containers
+## Decoding
+
+Simplest form:
+
+```swift
+let decoder = JSONDecoder()
+
+do {
+    // Decode the JSON data into a User object
+    let user = try decoder.decode(User.self, from: jsonData)
+    print(user.name)  
+} catch {
+    print("Failed to decode JSON: \(error)")
+}
+```
+
+### Containers
 
 There are three types of containers in Swift:
 
@@ -1225,6 +1241,8 @@ Since multiple references can point to the same instance, **concurrent access** 
 
 Reference types are ideal for managing **shared, mutable state**, such as when working with objects in object-oriented programming or large data structures that you don’t want to copy.
 
+
+
 ## Generics
 
 **<T: Comparable>**: One letter for the generic type, then what the type will conform to (restraint on type). 
@@ -1375,9 +1393,9 @@ var arrayOfArray = [[1,2,3], [4,5,6], [7,8,9]]
 let singleArray = arrayOfArray.flatMap { $0 }
 ```
 
+![Screenshot 2024-09-25 at 3.39.53 PM](/Users/jannisgrimm/Desktop/Screenshot 2024-09-25 at 3.39.53 PM.png)
 
-
-## Sets vs Arrays & Dictionaries
+## CollectionTypes (Array, Set, Dict)
 
 **Array:** ordered, O(n) lookup 
 
