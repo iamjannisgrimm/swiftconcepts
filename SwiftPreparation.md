@@ -398,6 +398,10 @@ struct DynamicCodingKeys: CodingKey {
 
 ## Basics
 
+Object Oriented Programming Principles (OOP)
+
+
+
 **Signed Integers** like 
 
 ```swift
@@ -1263,9 +1267,9 @@ determineHigherValue(valueOne: 1 , valueTwo: 3)
 
 ## Closures
 
-**Closures** are self-contained blocks of functionality that can be passed around and used in code. (Functions that can be passed around).
+**Closures** are self-contained blocks of functionality that can be passed around, capture values and be used in your code.
 
-**Closure Expression Syntax:**
+### **Closure Expression Syntax:**
 
 ```swift
 { (parameters) -> returnType in
@@ -1273,72 +1277,117 @@ determineHigherValue(valueOne: 1 , valueTwo: 3)
 }
 ```
 
-
+**Example**
 
 ```swift
-struct Student {
-    let name: String
-    var testScore: Int
+let greeting = { (name: String) -> String in
+    return "Hello, \(name)!"
 }
-    
-let students = [Student(name: "Luke", testScore: 88),
-                Student (name: "Han", testScore: 73),
-                Student (name: "Leia", testScore: 95),
-                Student (name: "Chewy", testScore: 78),
-                Student (name: "Obi-Wan", testScore: 65),
-                Student (name:"Ahsoka", testScore: 86),
-                Student (name:"Yoda", testScore: 68)]
+print(greeting("John"))  // Output: Hello, John!
 ```
 
-**Closure:**
+### **Short syntax**
+
+**Type Inference**: Swift can infer the types of parameters and return value, so you can omit them.
+
+**Implicit Return**: If the closure has a single expression, the return keyword can be omitted.
 
 ```swift
-var topStudentsFilter: (Student) -> Bool = { student in
-    return student.testScore > 80
+let greeting = { name in "Hello, \(name)!" }
+print(greeting("John"))  // Output: Hello, John!
+```
+
+### **Anonymous Closures**
+
+Closures don’t need to have names and can be passed as inline expressions.
+
+```swift
+let numbers = [1, 2, 3, 4, 5]
+let squared = numbers.map { $0 * $0 }
+print(squared)  // Output: [1, 4, 9, 16, 25]
+```
+
+### **Trailing Closure Syntax**
+
+When a closure is the last argument to a function, it can be written outside the parentheses.
+
+```swift
+func performTask(task: () -> Void) {
+    task()
+}
+
+performTask {
+    print("Task performed!")
+}  // Output: Task performed!
+```
+
+### **Capturing Values**
+
+Closures capture constants and variables from their surrounding scope.
+
+```swift
+func makeCounter() -> () -> Int {
+    var count = 0
+    return {
+        count += 1
+        return count
+    }
+}
+
+let counter = makeCounter()
+print(counter())  // Output: 1
+print(counter())  // Output: 2
+```
+
+### **Escaping Closures**
+
+Are closures that are called after the function returns (e.g., async operations).
+
+Use @escaping keyword to indicate a closure escapes.
+
+```swift
+func performAsyncTask(completion: @escaping () -> Void) {
+    DispatchQueue.global().async {
+        // Simulate async work
+        completion()
+    }
 }
 ```
 
-**Function:** (for comparison)
+### **Autoclosures**
+
+An **autoclosure** automatically creates a closure around an expression.
+
+Use @autoclosure for delaying execution of a specific code block until it’s actually called.
 
 ```swift
-func topStudentsFilterF(student: Student) -> Bool {
-    return student.testScore > 80
+func evaluate(predicate: @autoclosure () -> Bool) {
+    if predicate() {
+        print("True")
+    }
 }
+
+evaluate(predicate: 5 > 3)  // Output: True
 ```
 
-Use closure: (function would work in this case as well)
+### **Closures as Function Parameters**
+
+Closures can be passed as arguments to functions, making them flexible for custom behavior.
 
 ```swift
-let topStudents = students.filter(topStudentsFilter)
-```
-
-**Trailing closure syntax:**
-
-When the last argument is a closure it can be omitted and jumped straight to brackets
-
-```swift
-let topStudents2 = students.filter { student in
-    return student.testScore < 90
+func operateOnNumbers(_ a: Int, _ b: Int, operation: (Int, Int) -> Int) -> Int {
+    return operation(a, b)
 }
+
+let sum = operateOnNumbers(5, 3, operation: { $0 + $1 })
+print(sum)  // Output: 8
 ```
-
-**Shorthand notation:**
-
-```swift
-let topStudents3 = students.filter { $0.testScore < 90 }
-
-let studentRanking = topStudents.sorted { $0.testScore > $1.testScore }
-```
-
-Use @escaping when the closure needs to outlive the life of the function that called it.
-
-@autoclosures, @escaping
 
 
 
 ## Filter, Map, Reduce
 
-Different ways of writing simple for loops.
+Different ways of writing simple for loops. **These closures work on any CollectionType.**
 
 ```swift
 struct App {
@@ -1373,12 +1422,6 @@ var sum = numbers.reduce(0, +)
 var totalUsers = appPortfolio.reduce(0, { $0 + $1.users})
 ```
 
-**Chaining**: 
-
-```swift
-var revenue = appPortfolio.map { $0.cost * Double($0.users) }.reduce(0, +)
-```
-
 **Compact map**: Removing nils from array
 
 ```swift
@@ -1393,80 +1436,17 @@ var arrayOfArray = [[1,2,3], [4,5,6], [7,8,9]]
 let singleArray = arrayOfArray.flatMap { $0 }
 ```
 
+**Chaining**: 
+
+```swift
+var revenue = appPortfolio.map { $0.cost * Double($0.users) }.reduce(0, +)
+```
+
 ![Screenshot 2024-09-25 at 3.39.53 PM](/Users/jannisgrimm/Desktop/Screenshot 2024-09-25 at 3.39.53 PM.png)
 
-## CollectionTypes (Array, Set, Dict)
+## CollectionTypes 
 
-**Array:** ordered, O(n) lookup 
-
-**Set**: unordered, O(1) lookup thru hashing
-
-//Add dictionaries to this
-
-//More info on both
-
-.isinfirst() for arrays for instance and all operations on arrays that are important
-
-**Operations**:
-
-```swift
-var swiftDevs: Set = ["Jannis", "Paul", "Sean", "Sameer", "Connor"]
-var swiftUIDevs: Set = ["Jannis", "Paul", "Sean", "Sameer"]
-var kotlinDevs: Set = ["Ramzi", "Adam", "Hannah"]
-var experiencedDevs: Set = ["Paul", "Sean", "Sameer", "Ramzi"]
-```
-
-**Intersect:** (pull out overlap)
-
-```swift
-var experiencedSwiftUIDevs = swiftDevs.intersection(experiencedDevs)
-```
-
-**Subtract:** (pull out difference)
-
-```swift
-var jrSwiftDevs = swiftDevs.subtracting(experiencedDevs)
-```
-
-**Disjoint:** Check for overlap (returns true if no overlap)
-
-```swift
-swiftDevs.isDisjoint(with: kotlinDevs)
-```
-
-**Union:** Combine
-
-```swift
-swiftDevs.union(kotlinDevs)
-```
-
-**Exclusive**: only in one set
-
-```swift
-let specialists = swiftDevs.symmetricDifference(kotlinDevs)
-```
-
-**Subset**:
-
-```swift
-swiftUIDevs.isSubset(of: kotlinDevs)
-```
-
-**Superset:**
-
-```swift
-swiftDevs.isSuperset(of: swiftUIDevs)
-```
-
-**Insert, delete, find**:
-
-```swift
-swiftDevs.insert("Bao")
-swiftDevs.remove("Bao")
-swiftDevs.contains("Jannis")//Bool
-```
-
-
+![Screenshot 2024-09-30 at 1.00.48 PM](/Users/jannisgrimm/Desktop/Screenshot 2024-09-30 at 1.00.48 PM.png)
 
 ## Optionals
 
